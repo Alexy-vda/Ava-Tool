@@ -28,7 +28,6 @@ func NewServer(config *configs.Config) *Server {
 	router := gin.Default()
 
 	router.Use(CORSMiddleware())
-	router.Use(OriginMiddleware())
 
 	return &Server{
 		Router: router,
