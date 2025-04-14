@@ -20,19 +20,3 @@ func CORSMiddleware() gin.HandlerFunc {
 			c.Next()
 	}
 }
-
-func OriginMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		origin := c.GetHeader("Origin")
-		realIP := c.GetHeader("X-Real-IP")
-
-		// Vérifier si l'origine correspond à "http://onefem.localhost"
-		if origin == "http://onefem.localhost" && realIP != "" {
-			// Modifier l'origine avec l'IP réelle
-			newOrigin := "http://" + realIP + ":80"
-			c.Request.Header.Set("Origin", newOrigin)
-		}
-
-		c.Next()
-	}
-}
