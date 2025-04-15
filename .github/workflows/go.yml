@@ -39,10 +39,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "${GITHUB_TOKEN}" | gh auth login --with-token
-          ls -l ${GITHUB_WORKSPACE}
-          gh release create "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/${{ steps.build.outputs.binary_name }}" \
+          # Stocker le token dans une variable et le supprimer de l'environnement
+          token="${GITHUB_TOKEN}"
+          unset GITHUB_TOKEN
+          # Authentifier gh en utilisant le token stocké
+          echo "$token" | gh auth login --with-token
+      
+          # Vérifier la présence du binaire à uploader
+          ls -l "${GITHUB_WORKSPACE}"
+          # Créer ou éditer la release en uploadant l'asset
+          gh release create "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64" \
             --title "Release ${GITHUB_REF_NAME}" \
             --notes "Release générée automatiquement par GitHub Actions" \
             --notes-file RELEASE_NOTES.md 2>/dev/null || \
-          gh release edit "${GITHUB_REF_NAME}" --add-assets "${GITHUB_WORKSPACE}/${{ steps.build.outputs.binary_name }}"
+          gh release edit "${GITHUB_REF_NAME}" --add-assets "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64"
