@@ -53,5 +53,4 @@ jobs:
             gh release create "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64" \
             --title "Release ${GITHUB_REF_NAME}" \
             --notes "Release générée automatiquement par GitHub Actions" \
-            --notes-file RELEASE_NOTES.md
           fi
