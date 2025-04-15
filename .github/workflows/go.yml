@@ -27,8 +27,7 @@ jobs:
           echo "Utilisation du dossier: ${ARTIFACTS_DIR}"
           go build -o ${ARTIFACTS_DIR}/ava-tool -ldflags ''
           BINARY_NAME="ava-tool-${GITHUB_REF_NAME}-linux-amd64"
-          cp ${ARTIFACTS_DIR}/ava-tool ${ARTIFACTS_DIR}/${BINARY_NAME}
-          mv ${ARTIFACTS_DIR}/${BINARY_NAME} ../${BINARY_NAME}
+          cp ${ARTIFACTS_DIR}/ava-tool ../${BINARY_NAME}
           echo "::set-output name=binary_name::${BINARY_NAME}"
 
       - name: Install GitHub CLI (gh)
@@ -39,17 +38,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Stocker le token dans une variable et le supprimer de l'environnement
           token="${GITHUB_TOKEN}"
           unset GITHUB_TOKEN
-          # Authentifier gh en utilisant le token stocké
+
           echo "$token" | gh auth login --with-token
       
-          # Vérifier la présence du binaire à uploader
-          ls -l "${GITHUB_WORKSPACE}/cmd/cli"
-          # Créer ou éditer la release en uploadant l'asset
+          ls -l "${GITHUB_WORKSPACE}"
+      
           gh release create "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64" \
             --title "Release ${GITHUB_REF_NAME}" \
             --notes "Release générée automatiquement par GitHub Actions" \
             --notes-file RELEASE_NOTES.md 2>/dev/null || \
-          gh release edit "${GITHUB_REF_NAME}" --add-assets "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64"
+          gh release upload "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64"
