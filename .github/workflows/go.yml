@@ -30,7 +30,7 @@ jobs:
           goarch: amd64
           binary_name: ava-tool
           project_path: ./cmd/cli
-          asset_name: ./cmd/cli/ava-tool-v${{ github.ref_name }}-linux-amd64
+          asset_name: ava-tool-v${{ github.ref_name }}-linux-amd64
           compress_assets: false
           md5sum: false
           sha256sum: false
