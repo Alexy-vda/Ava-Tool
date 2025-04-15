@@ -22,9 +22,6 @@ var globalTemplate string
 //go:embed templates/health.go.tmpl
 var healthTemplate string
 
-//go:embed templates/router.go.tmpl
-var routerHelperTemplate string
-
 //go:embed templates/request.go.tmpl
 var requestTemplate string
 
@@ -81,7 +78,6 @@ func GenerateService(name string, includeDB bool, port string) {
 		filepath.Join(baseDir, "internal/api/routers/global.go"):  globalTemplate,
 		filepath.Join(baseDir, "internal/api/handlers/health.go"): healthTemplate,
 		filepath.Join(baseDir, "internal/configs/config.go"):      configTemplate,
-		filepath.Join(baseDir, "internal/helpers/router.go"):      routerHelperTemplate,
 		filepath.Join(baseDir, "internal/helpers/request.go"):     requestTemplate,
 		filepath.Join(baseDir, "internal/server/middleware.go"):   middlewareTemplate,
 		filepath.Join(baseDir, "internal/server/server.go"):       serverTemplate,
