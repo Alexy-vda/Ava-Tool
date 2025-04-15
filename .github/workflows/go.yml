@@ -42,11 +42,16 @@ jobs:
           unset GITHUB_TOKEN
 
           echo "$token" | gh auth login --with-token
-      
+
           ls -l "${GITHUB_WORKSPACE}"
-      
-          gh release create "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64" \
+
+          if gh release view "${GITHUB_REF_NAME}" > /dev/null 2>&1; then
+            echo "La release ${GITHUB_REF_NAME} existe, on télécharge l'asset..."
+            gh release upload "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64"
+          else
+          echo "La release ${GITHUB_REF_NAME} n'existe pas, on la crée..."
+            gh release create "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64" \
             --title "Release ${GITHUB_REF_NAME}" \
             --notes "Release générée automatiquement par GitHub Actions" \
-            --notes-file RELEASE_NOTES.md 2>/dev/null || \
-          gh release upload "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64"
+            --notes-file RELEASE_NOTES.md
+          fi
