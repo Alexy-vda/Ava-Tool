@@ -22,21 +22,16 @@ jobs:
         with:
           go-version: '1.22.2'
 
-      - name: Build Binary
-        run: |
-          mkdir -p dist
-          go build -o dist/ava-tool ./cmd/cli/
-
       - name: Build and Release
         uses: wangyoucao577/go-release-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: linux
           goarch: amd64
-          compress_assets: true
-          project_path: ./cmd/cli/
           binary_name: ava-tool
+          project_path: ./cmd/cli/
+          compress_assets: true
+          md5sum: true
+          sha256sum: true
           release_tag: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}
-          file: dist/ava-tool
-          asset_name: ava-tool-${{ github.ref_name }}-linux-amd64.tar.gz
