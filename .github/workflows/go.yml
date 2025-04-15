@@ -40,8 +40,8 @@ jobs:
           goarch: amd64
           binary_name: ava-tool
           project_path: ./cmd/cli/
-          compress_assets: true
-          md5sum: true
-          sha256sum: true
+          compress_assets: false
+          md5sum: false
+          sha256sum: false
           release_tag: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}
