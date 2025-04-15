@@ -22,16 +22,6 @@ jobs:
         with:
           go-version: '1.21'
 
-      - name: Create GitHub Release (if not exists)
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build and Upload Binary
         uses: wangyoucao577/go-release-action@v1
         with:
@@ -39,7 +29,7 @@ jobs:
           goos: linux
           goarch: amd64
           binary_name: ava-tool
-          project_path: ./cmd/cli/
+          project_path: ./cmd/cli
           compress_assets: false
           md5sum: false
           sha256sum: false
