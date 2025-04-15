@@ -29,8 +29,8 @@ jobs:
           goos: linux
           goarch: amd64
           compress_assets: true
-          project_path: './cmd/cli/'
-          binary_name: 'ava-tool'
+          project_path: ./cmd/cli/
+          binary_name: ava-tool
           release_tag: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}
-          asset_name: ava-tool-${{ github.ref_name }}-linux-amd64
+          asset_name: ava-tool-${{ github.ref_name }}-linux-amd64.tar.gz
