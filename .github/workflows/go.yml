@@ -22,6 +22,11 @@ jobs:
         with:
           go-version: '1.22.2'
 
+      - name: Debug Environment
+        run: |
+          go version
+          ls -al ./cmd/cli/
+
       - name: Build and Release
         uses: wangyoucao577/go-release-action@v1
         with:
