@@ -26,8 +26,8 @@ jobs:
         uses: wangyoucao577/go-release-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: 'linux,darwin,windows'
-          goarch: 'amd64'
-          compress_assets: 'true'
-          project_path: '.'
+          goos: linux,darwin,windows
+          goarch: amd64
+          compress_assets: true
+          project_path: './cmd/cli/'
           binary_name: 'ava-tool'
