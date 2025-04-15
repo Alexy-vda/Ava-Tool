@@ -31,3 +31,7 @@ jobs:
           compress_assets: true
           project_path: './cmd/cli/'
           binary_name: 'ava-tool'
+          md5sum: true
+          sha256sum: true
+          release_tag: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
