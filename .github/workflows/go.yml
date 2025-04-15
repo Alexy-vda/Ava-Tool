@@ -1,16 +1,17 @@
 name: Build and Release
 
 permissions:
-  contents: write 
+  contents: write
 
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*'  # Déclenchement sur les tags commençant par "v"
 
 jobs:
   release:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,34 +21,33 @@ jobs:
         with:
           go-version: '1.22.2'
 
-      - name: Build Binary
+      - name: Build the binary
+        id: build
+        working-directory: ./cmd/cli
         run: |
           ARTIFACTS_DIR="build-artifacts-$(date +%s)"
           mkdir -p ${ARTIFACTS_DIR}
           echo "Utilisation du dossier: ${ARTIFACTS_DIR}"
           go build -o ${ARTIFACTS_DIR}/ava-tool -ldflags ''
           BINARY_NAME="ava-tool-${GITHUB_REF_NAME}-linux-amd64"
-          cp ${ARTIFACTS_DIR}/ava-tool ${ARTIFACTS_DIR}/${BINARY_NAME}
-          # Copier le binaire à la racine pour que GH CLI puisse le trouver
-          cp ${ARTIFACTS_DIR}/${BINARY_NAME} ${GITHUB_WORKSPACE}/
+          cp ${ARTIFACTS_DIR}/ava-tool ../../${BINARY_NAME}
           echo "::set-output name=binary_name::${BINARY_NAME}"
 
       - name: Install GitHub CLI (gh)
         run: |
           sudo apt-get update && sudo apt-get install -y gh
 
-      - name: Create or Update Release and Upload Asset
+      - name: Create GitHub Release and Upload Asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Stocker le token dans une variable et le retirer de l'environnement
           token="${GITHUB_TOKEN}"
           unset GITHUB_TOKEN
+
           echo "$token" | gh auth login --with-token
-          
+
           ls -l "${GITHUB_WORKSPACE}"
 
-          # Vérifier si la release existe déjà
           if gh release view "${GITHUB_REF_NAME}" > /dev/null 2>&1; then
             echo "La release ${GITHUB_REF_NAME} existe, on upload l'asset..."
             gh release upload "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/${{ steps.build.outputs.binary_name }}"
