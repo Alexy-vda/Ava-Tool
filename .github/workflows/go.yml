@@ -22,10 +22,10 @@ jobs:
         with:
           go-version: '1.22.2'
 
-      - name: Debug Environment
+      - name: Build Binary
         run: |
-          go version
-          ls -al ./cmd/cli/
+          mkdir -p dist
+          go build -o dist/ava-tool ./cmd/cli/
 
       - name: Build and Release
         uses: wangyoucao577/go-release-action@v1
@@ -38,4 +38,5 @@ jobs:
           binary_name: ava-tool
           release_tag: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}
+          file: dist/ava-tool
           asset_name: ava-tool-${{ github.ref_name }}-linux-amd64.tar.gz
