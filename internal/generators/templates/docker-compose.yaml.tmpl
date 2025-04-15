@@ -12,8 +12,10 @@ services:
     networks:
       - {{.ServiceName}}-network
       - API-network
-    volumes:
-      - /home/${USER}/share:/share
+    develop:
+      watch:
+        - path: ./internal
+          action: rebuild
 
 volumes:
   {{.ServiceName}}_db_data:
