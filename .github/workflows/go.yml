@@ -46,7 +46,7 @@ jobs:
           echo "$token" | gh auth login --with-token
       
           # Vérifier la présence du binaire à uploader
-          ls -l "${GITHUB_WORKSPACE}"
+          ls -l "${GITHUB_WORKSPACE}/cmd/cli"
           # Créer ou éditer la release en uploadant l'asset
           gh release create "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/ava-tool-v1.0.5-linux-amd64" \
             --title "Release ${GITHUB_REF_NAME}" \
