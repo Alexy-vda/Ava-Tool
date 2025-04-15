@@ -3,36 +3,46 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*'
-
-permissions:
-  contents: write
+      - 'v*'  # Déclenchement sur les tags commençant par "v"
 
 jobs:
   release:
-    name: Build and Release Binary
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.22.2'
 
-      - name: Build and Upload Binary
-        uses: wangyoucao577/go-release-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: linux
-          goarch: amd64
-          binary_name: ava-tool
-          project_path: ./cmd/cli
-          asset_name: ava-tool-v${{ github.ref_name }}-linux-amd64
-          compress_assets: false
-          md5sum: false
-          sha256sum: false
-          release_tag: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
+      - name: Build the binary
+        id: build
+        working-directory: ./cmd/cli
+        run: |
+          ARTIFACTS_DIR="build-artifacts-$(date +%s)"
+          mkdir -p ${ARTIFACTS_DIR}
+          echo "Utilisation du dossier: ${ARTIFACTS_DIR}"
+          go build -o ${ARTIFACTS_DIR}/ava-tool -ldflags ''
+          BINARY_NAME="ava-tool-${GITHUB_REF_NAME}-linux-amd64"
+          cp ${ARTIFACTS_DIR}/ava-tool ${ARTIFACTS_DIR}/${BINARY_NAME}
+          mv ${ARTIFACTS_DIR}/${BINARY_NAME} ../${BINARY_NAME}
+          echo "::set-output name=binary_name::${BINARY_NAME}"
+
+      - name: Install GitHub CLI (gh)
+        run: |
+          sudo apt-get update && sudo apt-get install -y gh
+
+      - name: Create GitHub Release and Upload Asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "${GITHUB_TOKEN}" | gh auth login --with-token
+          ls -l ${GITHUB_WORKSPACE}
+          gh release create "${GITHUB_REF_NAME}" "${GITHUB_WORKSPACE}/${{ steps.build.outputs.binary_name }}" \
+            --title "Release ${GITHUB_REF_NAME}" \
+            --notes "Release générée automatiquement par GitHub Actions" \
+            --notes-file RELEASE_NOTES.md 2>/dev/null || \
+          gh release edit "${GITHUB_REF_NAME}" --add-assets "${GITHUB_WORKSPACE}/${{ steps.build.outputs.binary_name }}"
