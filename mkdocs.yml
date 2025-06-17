@@ -1,0 +1,44 @@
+# mkdocs.yml
+site_name: Ava Tool
+site_description: Générateur de services Go moderne et rapide
+site_author: Alexy Van Den Abele
+repo_url: https://github.com/alexy-vda/ava-tool
+repo_name: GitHub
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: blue
+      accent: cyan
+  features:
+    - navigation.sections
+    - search.suggest
+    - search.highlight
+    - toc.integrate
+nav:
+  - Accueil: index.md
+  - Utilisation: utilisation.md
+  - Architecture: architecture.md
+  - FAQ: faq.md
+  - Contact: contact.md
+markdown_extensions:
+  - admonition
+  - codehilite
+  - toc:
+      permalink: true
+  - footnotes
+  - meta
+  - tables
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.tasklist
+  - pymdownx.keys
+  - pymdownx.snippets
+  - pymdownx.highlight
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
