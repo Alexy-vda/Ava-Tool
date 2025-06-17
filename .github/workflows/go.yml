@@ -27,13 +27,13 @@ jobs:
           mkdir -p dist
           EXT=""
           if [ "${{ matrix.goos }}" = "windows" ]; then EXT=".exe"; fi
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/ava-tool-${{ matrix.goos }}-${{ matrix.goarch }}${EXT} ./cmd/cli/main.go
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/ava-${{ matrix.goos }}-${{ matrix.goarch }}${EXT} ./cmd/ava/main.go
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ava-tool-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/ava-tool-${{ matrix.goos }}-${{ matrix.goarch }}*
+          name: ava-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/ava-${{ matrix.goos }}-${{ matrix.goarch }}*
 
   release:
     name: Create GitHub Release
@@ -48,6 +48,6 @@ jobs:
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/**/ava-tool-*
+          files: dist/**/ava-*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
