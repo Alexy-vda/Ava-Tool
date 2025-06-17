@@ -1,6 +1,6 @@
 # FAQ
 
-### Why use Ava Tool?
+### Why use Ava?
 
 To save time creating Go services, standardize your architectures, and speed up your deployments.
 

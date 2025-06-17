@@ -1,13 +1,42 @@
-# Ava Tool
+# Ava
 
-Ava Tool is a CLI utility designed to accelerate the creation of Go services. It generates a ready-to-use service structure, including a Gin-based router, optional Gorm ORM setup (with PostgreSQL), Docker & Docker Compose integration, and a GitLab CI configuration.
+Ava is a CLI utility designed to accelerate the creation of Go services. It generates a ready-to-use service structure, including a Gin-based router, optional Gorm ORM setup (with PostgreSQL), Docker & Docker Compose integration, and a GitLab CI configuration.
+
+[![Documentation](https://img.shields.io/badge/docs-online-blue)](https://alexy-vda.github.io/Ava-Tool/)
 
 ---
 
-## 📚 Documentation
+## 🚀 Installation
 
-The full documentation is available online:  
-👉 [See the documentation site](https://alexy-vda.github.io/Ava-Tool/)
+### Download the latest release
+
+Go to the [Releases page](https://github.com/alexy-vda/Ava-Tool/releases) and download the binary for your platform:
+
+- **Linux**: `ava-linux-amd64` or `ava-linux-arm64`
+- **macOS**: `ava-darwin-amd64` or `ava-darwin-arm64`
+- **Windows**: `ava-windows-amd64.exe` or `ava-windows-arm64.exe`
+
+Rename the file to `ava` (or `ava.exe` on Windows) and move it to a directory in your `PATH` (e.g., `/usr/local/bin` on Linux/macOS).
+
+```bash
+# Example for Linux/macOS
+chmod +x ava
+sudo mv ava /usr/local/bin/
+```
+
+### (Optional) Install via Homebrew
+
+_Coming soon!_
+
+---
+
+## 🛠️ Usage
+
+```bash
+ava create
+```
+
+For more details, see the [documentation](https://alexy-vda.github.io/Ava-Tool/).
 
 ---
 

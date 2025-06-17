@@ -7,13 +7,15 @@
 ## Run the tool
 
 ```bash
-ava-tool
+ava <command>
 ```
 
-Answer the interactive questions to generate a new Go service.
+### Available commands
 
-!!! info "Tip"
-    You can rerun the generation as many times as needed, each service will be created in a separate folder.
+- `ava create` : Interactively generate a new Go service
+- `ava help`   : Show help and available commands
+
+_You can rerun the generation as many times as needed, each service will be created in a separate folder._
 
 ## Start a generated service
 
