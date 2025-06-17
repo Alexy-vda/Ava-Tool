@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"text/template"
+	"time"
 )
 
 // Embedding all template files
@@ -68,11 +69,18 @@ func GenerateService(name string, includeDB bool, port string) {
 	if includeDB {
 		directories = append(directories, "internal/db/", "internal/models", "internal/repositories")
 	}
+
+	steps := len(directories) + 1 // +1 for file generation
+	progress := 0
+	printProgressBar(progress, steps, "Creating directories...")
+
 	for _, dir := range directories {
 		os.MkdirAll(filepath.Join(baseDir, dir), os.ModePerm)
+		progress++
+		printProgressBar(progress, steps, "Creating directories...")
+		time.Sleep(80 * time.Millisecond)
 	}
 
-	// Définition des fichiers à générer et des templates associés
 	files := map[string]string{
 		filepath.Join(baseDir, "cmd/server/main.go"):              selectTemplate(includeDB, mainTemplate, mainDBTemplate),
 		filepath.Join(baseDir, "internal/api/routers/global.go"):  globalTemplate,
@@ -87,21 +95,50 @@ func GenerateService(name string, includeDB bool, port string) {
 		filepath.Join(baseDir, "docker-compose.yaml"):             selectTemplate(includeDB, dockerComposeTemplate, dockerComposeDBTemplate),
 	}
 
-	// Ajout des fichiers spécifiques à la DB si nécessaire
 	if includeDB {
 		files[filepath.Join(baseDir, "internal/db/migration.go")] = migrationTemplate
 		files[filepath.Join(baseDir, "internal/db/init.go")] = initTemplate
 		files[filepath.Join(baseDir, "internal/models/base.go")] = baseTemplate
 	}
 
-	// Génération des fichiers
+	progress++
+	printProgressBar(progress, steps, "Generating files...")
+	time.Sleep(120 * time.Millisecond)
+
 	for path, tmplContent := range files {
 		generateFileFromTemplate(path, tmplContent, map[string]string{
 			"ServiceName": name,
 			"Port":        port,
 		})
 	}
-	fmt.Printf("Service %s created successfully\n", name)
+
+	// Nettoie la ligne précédente avant d'afficher le message final
+	clearLine()
+	fmt.Printf("\033[1;34m✔ Service %s created successfully!\033[0m\n", name)
+	fmt.Printf("\033[1;34mTo start your service:\033[0m\n")
+	fmt.Printf("\033[1;34m  cd %s && docker-compose up\033[0m\n", name)
+}
+
+func printProgressBar(progress, total int, phase string) {
+	barLen := 30
+	filled := int(float64(progress) / float64(total) * float64(barLen))
+	bar := "[" + string(repeatRune('=', filled)) + string(repeatRune(' ', barLen-filled)) + "]"
+	fmt.Printf("\r\033[1;34m%s %s %d/%d\033[0m", bar, phase, progress, total)
+	if progress == total {
+		fmt.Print("\r")
+	}
+}
+
+func clearLine() {
+	fmt.Print("\r\033[2K")
+}
+
+func repeatRune(r rune, count int) []rune {
+	result := make([]rune, count)
+	for i := range result {
+		result[i] = r
+	}
+	return result
 }
 
 // selectTemplate sélectionne le template selon la présence ou non de la DB
