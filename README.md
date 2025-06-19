@@ -3,7 +3,8 @@
 Ava is a CLI utility designed to accelerate the creation of Go services. It generates a ready-to-use service structure, including a Gin-based router, optional Gorm ORM setup (with PostgreSQL), Docker & Docker Compose integration, and a GitLab CI configuration.
 
 [![Documentation](https://img.shields.io/badge/docs-online-blue)](https://alexy-vda.github.io/Ava-Tool/)
-
+[![GitHub Release](https://img.shields.io/github/v/release/alexy-vda/Ava-Tool?color=blue)](https://github.com/alexy-vda/Ava-Tool/releases)
+[![Go Report](https://goreportcard.com/badge/github.com/alexy-vda/Ava-Tool)](https://goreportcard.com/report/github.com/alexy-vda/Ava-Tool)
 ---
 
 ## 🚀 Installation
