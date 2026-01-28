@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	sentrygin "github.com/getsentry/sentry-go/gin"
+	{{if .IncludeSentry}}sentrygin "github.com/getsentry/sentry-go/gin"{{end}}
 	{{if .IncludePrometheus}}ginprometheus "github.com/zsais/go-gin-prometheus"{{end}}
 	{{if .IncludeSwagger}}swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"{{end}}
@@ -31,10 +31,12 @@ func NewServer(config *configs.Config) *Server {
 
 	router := gin.Default()
 
+	{{if .IncludeSentry}}
 	// Initialize Sentry middleware
 	router.Use(sentrygin.New(sentrygin.Options{
 		Repanic: true,
 	}))
+	{{end}}
 
 	{{if .IncludePrometheus}}
 	// Prometheus metrics

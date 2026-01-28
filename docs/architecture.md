@@ -40,9 +40,9 @@
     - **Services**: Contain business logic.
     - **Repositories**: Handle data access (DB).
 - **Observability**:
-    - **Prometheus**: `/metrics` endpoint (Optional).
-    - **Sentry**: Error tracking (Optional, via `SENTRY_DSN`).
-    - **Swagger**: API Documentation (Optional).
+    - **Prometheus**: `/metrics` endpoint (Optional, via `--with-prometheus`).
+    - **Sentry**: Error tracking (Optional, via `--with-sentry` & `SENTRY_DSN`).
+    - **Swagger**: API Documentation (Optional, via `--with-swagger`).
 
 ## Automatic generation
 

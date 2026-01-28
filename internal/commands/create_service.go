@@ -34,20 +34,26 @@ func CreateServiceCommand(cmd *cobra.Command) {
 		includePrometheus = helpers.PromptYesNo("Do you want to include Prometheus metrics?")
 	}
 
-	// 4. Swagger
+	// 4. Sentry
+	includeSentry, _ := cmd.Flags().GetBool("with-sentry")
+	if !cmd.Flags().Changed("with-sentry") {
+		includeSentry = helpers.PromptYesNo("Do you want to include Sentry for error tracking?")
+	}
+
+	// 5. Swagger
 	includeSwagger, _ := cmd.Flags().GetBool("with-swagger")
 	if !cmd.Flags().Changed("with-swagger") {
 		includeSwagger = helpers.PromptYesNo("Do you want to include Swagger documentation?")
 	}
 
-	// 5. Port
+	// 6. Port
 	port, _ := cmd.Flags().GetString("port")
 	if !cmd.Flags().Changed("port") {
 		port = helpers.PromptWithDefault("Enter the port", "8080")
 	}
 
 	// Execution
-	if err := generators.GenerateService(serviceName, includeDB, includePrometheus, includeSwagger, port); err != nil {
+	if err := generators.GenerateService(serviceName, includeDB, includePrometheus, includeSentry, includeSwagger, port); err != nil {
 		log.Fatalf("Error generating service: %v", err)
 	}
 

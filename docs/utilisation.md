@@ -17,8 +17,9 @@ When you run `ava create` without flags, you will be asked the following questio
 1.  **Service Name**: The name of your new Go service.
 2.  **Include PostgreSQL Database?**: (y/n) Adds Gorm, migration scripts, and Docker Compose DB setup.
 3.  **Include Prometheus Metrics?**: (y/n) Adds a `/metrics` endpoint for monitoring.
-4.  **Include Swagger Documentation?**: (y/n) Pre-configures Swagger. *Note: You must run `swag init` manually afterwards.*
-5.  **Service Port**: The port your service will listen on (default: 8080).
+4.  **Include Sentry for error tracking?**: (y/n) Adds Sentry integration and middleware.
+5.  **Include Swagger Documentation?**: (y/n) Pre-configures Swagger. *Note: You must run `swag init` manually afterwards.*
+6.  **Service Port**: The port your service will listen on (default: 8080).
 
 ### Non-Interactive Mode (Flags)
 
@@ -34,6 +35,7 @@ ava create --name <name> [options]
 - `--port, -p <string>`: Port to listen on (Default: "8080").
 - `--with-db`: Include PostgreSQL database.
 - `--with-prometheus`: Include Prometheus metrics.
+- `--with-sentry`: Include Sentry error tracking.
 - `--with-swagger`: Include Swagger documentation.
 
 **Example:**

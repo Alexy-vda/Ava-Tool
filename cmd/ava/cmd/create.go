@@ -27,5 +27,6 @@ func init() {
 	createCmd.Flags().StringP("port", "p", "8080", "Port to listen on")
 	createCmd.Flags().Bool("with-db", false, "Include PostgreSQL database (GORM)")
 	createCmd.Flags().Bool("with-prometheus", false, "Include Prometheus metrics endpoint")
+	createCmd.Flags().Bool("with-sentry", false, "Include Sentry error tracking")
 	createCmd.Flags().Bool("with-swagger", false, "Include Swagger documentation config")
 }

@@ -8,13 +8,13 @@ import (
 type Config struct {
 	Port      string
 	GinMode   string
-	SentryDSN string
+	{{if .IncludeSentry}}SentryDSN string{{end}}
 }
 
 func LoadConfig() *Config {
 	viper.SetDefault("PORT", "8080")
 	viper.SetDefault("GIN_MODE", "debug")
-	viper.SetDefault("SENTRY_DSN", "")
+	{{if .IncludeSentry}}viper.SetDefault("SENTRY_DSN", ""){{end}}
 
 	// Load environment variables
 	viper.AutomaticEnv()
@@ -29,6 +29,6 @@ func LoadConfig() *Config {
 	return &Config{
 		Port:      viper.GetString("PORT"),
 		GinMode:   viper.GetString("GIN_MODE"),
-		SentryDSN: viper.GetString("SENTRY_DSN"),
+		{{if .IncludeSentry}}SentryDSN: viper.GetString("SENTRY_DSN"),{{end}}
 	}
 }

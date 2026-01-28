@@ -2,18 +2,19 @@ package main
 
 import (
 	"log"
-	"time"
+	{{if .IncludeSentry}}"time"{{end}}
 
 	"{{.ServiceName}}/internal/api/routers"
 	"{{.ServiceName}}/internal/configs"
 	"{{.ServiceName}}/internal/server"
 
-	"github.com/getsentry/sentry-go"
+	{{if .IncludeSentry}}"github.com/getsentry/sentry-go"{{end}}
 )
 
 func main() {
 	config := configs.LoadConfig()
 
+	{{if .IncludeSentry}}
 	// Initialize Sentry if DSN is provided
 	if config.SentryDSN != "" {
 		err := sentry.Init(sentry.ClientOptions{
@@ -27,6 +28,7 @@ func main() {
 			log.Println("Sentry initialized successfully")
 		}
 	}
+	{{end}}
 
 	s := server.NewServer(config)
 	routers.RegisterRoutes(s.Router)

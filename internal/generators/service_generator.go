@@ -62,7 +62,7 @@ var dockerComposeDBTemplate string
 var readmeTemplate string
 
 // GenerateService crée la structure des fichiers pour un nouveau service
-func GenerateService(name string, includeDB, includePrometheus, includeSwagger bool, port string) error {
+func GenerateService(name string, includeDB, includePrometheus, includeSentry, includeSwagger bool, port string) error {
 	baseDir := name
 
 	// Vérifier si le dossier existe déjà pour éviter l'écrasement
@@ -114,6 +114,7 @@ func GenerateService(name string, includeDB, includePrometheus, includeSwagger b
 			"ServiceName":       name,
 			"Port":              port,
 			"IncludePrometheus": includePrometheus,
+			"IncludeSentry":     includeSentry,
 			"IncludeSwagger":    includeSwagger,
 		}); err != nil {
 			return fmt.Errorf("failed to generate file %s: %w", path, err)
