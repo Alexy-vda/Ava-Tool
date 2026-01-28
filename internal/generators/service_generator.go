@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"text/template"
-	"time"
 )
 
 // Embedding all template files
@@ -59,40 +58,49 @@ var dockerComposeTemplate string
 //go:embed templates/docker-compose-db.yaml.tmpl
 var dockerComposeDBTemplate string
 
+//go:embed templates/README.md.tmpl
+var readmeTemplate string
+
 // GenerateService crée la structure des fichiers pour un nouveau service
-func GenerateService(name string, includeDB bool, port string) {
+func GenerateService(name string, includeDB, includePrometheus, includeSwagger bool, port string) error {
 	baseDir := name
+
+	// Vérifier si le dossier existe déjà pour éviter l'écrasement
+	if _, err := os.Stat(baseDir); !os.IsNotExist(err) {
+		return fmt.Errorf("directory '%s' already exists", baseDir)
+	}
+
 	directories := []string{
-		"cmd/server", "internal/configs", "internal/api/handlers",
+		filepath.Join("cmd", name), "internal/configs", "internal/api/handlers",
 		"internal/api/routers", "internal/server", "internal/services", "internal/helpers",
 	}
 	if includeDB {
 		directories = append(directories, "internal/db/", "internal/models", "internal/repositories")
 	}
 
-	steps := len(directories) + 1 // +1 for file generation
-	progress := 0
-	printProgressBar(progress, steps, "Creating directories...")
+	fmt.Printf("Creating project structure in '%s'...\n", baseDir)
 
 	for _, dir := range directories {
-		os.MkdirAll(filepath.Join(baseDir, dir), os.ModePerm)
-		progress++
-		printProgressBar(progress, steps, "Creating directories...")
-		time.Sleep(80 * time.Millisecond)
+		dirPath := filepath.Join(baseDir, dir)
+		// Utilisation de 0755 (rwxr-xr-x) au lieu de ModePerm (0777) pour la sécurité
+		if err := os.MkdirAll(dirPath, 0755); err != nil {
+			return fmt.Errorf("failed to create directory %s: %w", dirPath, err)
+		}
 	}
 
 	files := map[string]string{
-		filepath.Join(baseDir, "cmd/server/main.go"):              selectTemplate(includeDB, mainTemplate, mainDBTemplate),
-		filepath.Join(baseDir, "internal/api/routers/global.go"):  globalTemplate,
+		filepath.Join(baseDir, "cmd", name, "main.go"):           selectTemplate(includeDB, mainTemplate, mainDBTemplate),
+		filepath.Join(baseDir, "internal/api/routers/global.go"): globalTemplate,
 		filepath.Join(baseDir, "internal/api/handlers/health.go"): healthTemplate,
-		filepath.Join(baseDir, "internal/configs/config.go"):      configTemplate,
-		filepath.Join(baseDir, "internal/helpers/request.go"):     requestTemplate,
-		filepath.Join(baseDir, "internal/server/middleware.go"):   middlewareTemplate,
-		filepath.Join(baseDir, "internal/server/server.go"):       serverTemplate,
-		filepath.Join(baseDir, ".env"):                            envTemplate,
-		filepath.Join(baseDir, ".gitignore"):                      gitignoreTemplate,
-		filepath.Join(baseDir, "Dockerfile"):                      dockerfileTemplate,
-		filepath.Join(baseDir, "docker-compose.yaml"):             selectTemplate(includeDB, dockerComposeTemplate, dockerComposeDBTemplate),
+		filepath.Join(baseDir, "internal/configs/config.go"):     configTemplate,
+		filepath.Join(baseDir, "internal/helpers/request.go"):    requestTemplate,
+		filepath.Join(baseDir, "internal/server/middleware.go"):  middlewareTemplate,
+		filepath.Join(baseDir, "internal/server/server.go"):      serverTemplate,
+		filepath.Join(baseDir, ".env"):                           envTemplate,
+		filepath.Join(baseDir, ".gitignore"):                     gitignoreTemplate,
+		filepath.Join(baseDir, "Dockerfile"):                     dockerfileTemplate,
+		filepath.Join(baseDir, "docker-compose.yaml"):            selectTemplate(includeDB, dockerComposeTemplate, dockerComposeDBTemplate),
+		filepath.Join(baseDir, "README.md"):                       readmeTemplate,
 	}
 
 	if includeDB {
@@ -101,44 +109,18 @@ func GenerateService(name string, includeDB bool, port string) {
 		files[filepath.Join(baseDir, "internal/models/base.go")] = baseTemplate
 	}
 
-	progress++
-	printProgressBar(progress, steps, "Generating files...")
-	time.Sleep(120 * time.Millisecond)
-
 	for path, tmplContent := range files {
-		generateFileFromTemplate(path, tmplContent, map[string]string{
-			"ServiceName": name,
-			"Port":        port,
-		})
+		if err := generateFileFromTemplate(path, tmplContent, map[string]interface{}{
+			"ServiceName":       name,
+			"Port":              port,
+			"IncludePrometheus": includePrometheus,
+			"IncludeSwagger":    includeSwagger,
+		}); err != nil {
+			return fmt.Errorf("failed to generate file %s: %w", path, err)
+		}
 	}
 
-	// Nettoie la ligne précédente avant d'afficher le message final
-	clearLine()
-	fmt.Printf("\033[1;34m✔ Service %s created successfully!\033[0m\n", name)
-	fmt.Printf("\033[1;34mTo start your service:\033[0m\n")
-	fmt.Printf("\033[1;34m  cd %s && docker-compose up\033[0m\n", name)
-}
-
-func printProgressBar(progress, total int, phase string) {
-	barLen := 30
-	filled := int(float64(progress) / float64(total) * float64(barLen))
-	bar := "[" + string(repeatRune('=', filled)) + string(repeatRune(' ', barLen-filled)) + "]"
-	fmt.Printf("\r\033[1;34m%s %s %d/%d\033[0m", bar, phase, progress, total)
-	if progress == total {
-		fmt.Print("\r")
-	}
-}
-
-func clearLine() {
-	fmt.Print("\r\033[2K")
-}
-
-func repeatRune(r rune, count int) []rune {
-	result := make([]rune, count)
-	for i := range result {
-		result[i] = r
-	}
-	return result
+	return nil
 }
 
 // selectTemplate sélectionne le template selon la présence ou non de la DB
@@ -150,22 +132,20 @@ func selectTemplate(includeDB bool, templateNoDB, templateWithDB string) string 
 }
 
 // generateFileFromTemplate génère un fichier à partir d'un contenu de template et d'une map de données
-func generateFileFromTemplate(outputPath, tmplContent string, data map[string]string) {
+func generateFileFromTemplate(outputPath, tmplContent string, data map[string]interface{}) error {
 	tmpl, err := template.New("template").Parse(tmplContent)
 	if err != nil {
-		fmt.Printf("Failed to parse template: %v\n", err)
-		return
+		return fmt.Errorf("failed to parse template: %w", err)
 	}
 
 	file, err := os.Create(outputPath)
 	if err != nil {
-		fmt.Printf("Failed to create file %s: %v\n", outputPath, err)
-		return
+		return fmt.Errorf("failed to create file: %w", err)
 	}
 	defer file.Close()
 
-	err = tmpl.Execute(file, data)
-	if err != nil {
-		fmt.Printf("Failed to execute template for %s: %v\n", outputPath, err)
+	if err := tmpl.Execute(file, data); err != nil {
+		return fmt.Errorf("failed to execute template: %w", err)
 	}
+	return nil
 }

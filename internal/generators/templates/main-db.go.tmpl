@@ -2,19 +2,37 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"{{.ServiceName}}/internal/api/routers"
 	"{{.ServiceName}}/internal/configs"
 	"{{.ServiceName}}/internal/db"
 	"{{.ServiceName}}/internal/server"
+
+	"github.com/getsentry/sentry-go"
 )
 
 func main() {
 	config := configs.LoadConfig()
+
+	// Initialize Sentry if DSN is provided
+	if config.SentryDSN != "" {
+		err := sentry.Init(sentry.ClientOptions{
+			Dsn: config.SentryDSN,
+		})
+		if err != nil {
+			log.Printf("Sentry initialization failed: %v\n", err)
+		} else {
+			// Flush buffered events before the program terminates.
+			defer sentry.Flush(2 * time.Second)
+			log.Println("Sentry initialized successfully")
+		}
+	}
+
 	s := server.NewServer(config)
 	routers.RegisterRoutes(s.Router)
 
-	// Initialiser la base de données et migrer les modèles
+	// Initialize database and migrate models
 	db.InitDB()
 	db.MigrateDB()
 

@@ -5,6 +5,10 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	sentrygin "github.com/getsentry/sentry-go/gin"
+	{{if .IncludePrometheus}}ginprometheus "github.com/zsais/go-gin-prometheus"{{end}}
+	{{if .IncludeSwagger}}swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"{{end}}
 )
 
 type Server struct {
@@ -21,13 +25,29 @@ func NewServer(config *configs.Config) *Server {
 	case "test":
 		gin.SetMode(gin.TestMode)
 	default:
-		log.Printf("Mode inconnu %s, passage en mode debug par défaut", config.GinMode)
+		log.Printf("Unknown mode %s, defaulting to debug mode", config.GinMode)
 		gin.SetMode(gin.DebugMode)
 	}
 
 	router := gin.Default()
 
+	// Initialize Sentry middleware
+	router.Use(sentrygin.New(sentrygin.Options{
+		Repanic: true,
+	}))
+
+	{{if .IncludePrometheus}}
+	// Prometheus metrics
+	p := ginprometheus.NewPrometheus("gin")
+	p.Use(router)
+	{{end}}
+
 	router.Use(CORSMiddleware())
+
+	{{if .IncludeSwagger}}
+	// Swagger documentation
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	{{end}}
 
 	return &Server{
 		Router: router,

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"go-init-service/internal/commands"
+	"ava-tool/internal/commands"
 
 	"github.com/spf13/cobra"
 )

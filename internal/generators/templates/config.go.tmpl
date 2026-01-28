@@ -1,23 +1,34 @@
 package configs
 
 import (
+	"log"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Port    string
-	GinMode string
+	Port      string
+	GinMode   string
+	SentryDSN string
 }
 
 func LoadConfig() *Config {
-	// Charger les variables d'environnement
-	viper.AutomaticEnv()
-	viper.SetConfigFile(".env")
-	viper.ReadInConfig()
+	viper.SetDefault("PORT", "8080")
+	viper.SetDefault("GIN_MODE", "debug")
+	viper.SetDefault("SENTRY_DSN", "")
 
-	// Retourner la configuration avec les services
+	// Load environment variables
+	viper.AutomaticEnv()
+	
+	viper.SetConfigFile(".env")
+	if err := viper.ReadInConfig(); err != nil {
+		// It's not a critical error if .env file is missing
+		// as long as variables are provided via environment.
+		log.Println("No .env file found, using environment variables and defaults")
+	}
+
 	return &Config{
-		Port:    viper.GetString("PORT"),
-		GinMode: viper.GetString("GIN_MODE"),
+		Port:      viper.GetString("PORT"),
+		GinMode:   viper.GetString("GIN_MODE"),
+		SentryDSN: viper.GetString("SENTRY_DSN"),
 	}
 }

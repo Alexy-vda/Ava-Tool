@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-init-service/cmd/ava/cmd"
+	"ava-tool/cmd/ava/cmd"
 )
 
 func main() {

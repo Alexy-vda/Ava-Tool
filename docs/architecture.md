@@ -11,33 +11,39 @@
 
 ```
 <service>/
-├── cmd/server/main.go
+├── cmd/
+│   └── <service-name>/
+│       └── main.go       # Entry point
 ├── internal/
 │   ├── api/
-│   │   ├── handlers/
-│   │   └── routers/
-│   ├── configs/
-│   ├── server/
-│   ├── helpers/
-│   ├── db/ (if DB enabled)
-│   ├── models/ (if DB enabled)
-│   └── repositories/ (if DB enabled)
+│   │   ├── handlers/     # HTTP Handlers
+│   │   └── routers/      # Route definitions
+│   ├── configs/          # Configuration (Env, Viper)
+│   ├── db/               # Database init & migrations (Optional)
+│   ├── helpers/          # Utilities
+│   ├── models/           # Data entities
+│   ├── repositories/     # Data access layer (Interfaces & Gorm impl)
+│   ├── server/           # HTTP Server setup (Gin, Middlewares)
+│   └── services/         # Business logic layer
 ├── .env
 ├── .gitignore
 ├── Dockerfile
 ├── docker-compose.yaml
+└── README.md             # Detailed implementation guide
 ```
 
-## How it works
+## Key Components
 
-- **cmd/server/main.go**: Service entry point.
-- **internal/api/routers**: Route declarations.
-- **internal/api/handlers**: HTTP handlers.
-- **internal/configs**: Configuration loading.
-- **internal/server**: Gin server initialization.
-- **internal/db**: PostgreSQL connection and migration (optional).
-- **internal/models**: GORM models (optional).
+- **Entry Point**: `cmd/<service-name>/main.go` wires up dependencies (Repositories, Services, Handlers) and starts the server.
+- **Clean Architecture**:
+    - **Handlers**: Parse requests and call Services.
+    - **Services**: Contain business logic.
+    - **Repositories**: Handle data access (DB).
+- **Observability**:
+    - **Prometheus**: `/metrics` endpoint (Optional).
+    - **Sentry**: Error tracking (Optional, via `SENTRY_DSN`).
+    - **Swagger**: API Documentation (Optional).
 
 ## Automatic generation
 
-The Ava command creates all these files and folders according to your choices.
+The Ava command creates all these files and folders according to your choices. It also generates a specific `README.md` inside your new service to guide you through implementing the Repository Pattern.

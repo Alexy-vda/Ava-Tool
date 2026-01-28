@@ -7,13 +7,18 @@
 ## Run the tool
 
 ```bash
-ava <command>
+ava create
 ```
 
-### Available commands
+### Interactive Prompts
 
-- `ava create` : Interactively generate a new Go service
-- `ava help`   : Show help and available commands
+When you run `ava create`, you will be asked the following questions:
+
+1.  **Service Name**: The name of your new Go service.
+2.  **Include PostgreSQL Database?**: (y/n) Adds Gorm, migration scripts, and Docker Compose DB setup.
+3.  **Include Prometheus Metrics?**: (y/n) Adds a `/metrics` endpoint for monitoring.
+4.  **Include Swagger Documentation?**: (y/n) Pre-configures Swagger. *Note: You must run `swag init` manually afterwards.*
+5.  **Service Port**: The port your service will listen on (default: 8080).
 
 _You can rerun the generation as many times as needed, each service will be created in a separate folder._
 
@@ -21,14 +26,17 @@ _You can rerun the generation as many times as needed, each service will be crea
 
 ```bash
 cd <service-name>
-docker-compose up
+docker-compose up --build
 ```
 
 ## Default endpoints
 
 - `/health`: Checks the service availability.
+- `/metrics`: (Optional) Prometheus metrics.
+- `/swagger/*any`: (Optional) Swagger API documentation.
 
 ## Environment variables
 
 - `PORT`: Service listening port (default: 8080)
 - `GIN_MODE`: Gin mode (`debug`, `release`, `test`)
+- `SENTRY_DSN`: (Optional) Sentry Data Source Name for error tracking.

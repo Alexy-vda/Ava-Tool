@@ -10,7 +10,7 @@ import (
 
 var DB *gorm.DB
 
-// InitDB initialise la connexion à la base de données avec GORM
+// InitDB initializes the database connection using GORM
 func InitDB() {
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
@@ -30,7 +30,7 @@ func InitDB() {
 	log.Println("Connected to the PostgreSQL database!")
 }
 
-// GetDB retourne une instance de la base de données
+// GetDB returns the database instance
 func GetDB() *gorm.DB {
 	return DB
 }
