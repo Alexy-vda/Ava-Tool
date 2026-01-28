@@ -12,13 +12,35 @@ ava create
 
 ### Interactive Prompts
 
-When you run `ava create`, you will be asked the following questions:
+When you run `ava create` without flags, you will be asked the following questions:
 
 1.  **Service Name**: The name of your new Go service.
 2.  **Include PostgreSQL Database?**: (y/n) Adds Gorm, migration scripts, and Docker Compose DB setup.
 3.  **Include Prometheus Metrics?**: (y/n) Adds a `/metrics` endpoint for monitoring.
 4.  **Include Swagger Documentation?**: (y/n) Pre-configures Swagger. *Note: You must run `swag init` manually afterwards.*
 5.  **Service Port**: The port your service will listen on (default: 8080).
+
+### Non-Interactive Mode (Flags)
+
+For automation, CI/CD, or AI agents, you can use flags to skip the prompts.
+
+```bash
+ava create --name <name> [options]
+```
+
+**Available Flags:**
+
+- `--name, -n <string>`: Name of the service (Required for non-interactive mode).
+- `--port, -p <string>`: Port to listen on (Default: "8080").
+- `--with-db`: Include PostgreSQL database.
+- `--with-prometheus`: Include Prometheus metrics.
+- `--with-swagger`: Include Swagger documentation.
+
+**Example:**
+```bash
+# Create a service named "auth-service" with DB and Prometheus on port 3000
+ava create --name auth-service --with-db --with-prometheus --port 3000
+```
 
 _You can rerun the generation as many times as needed, each service will be created in a separate folder._
 

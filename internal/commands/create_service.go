@@ -6,21 +6,47 @@ import (
 	"ava-tool/internal/helpers"
 	"log"
 	"regexp"
+
+	"github.com/spf13/cobra"
 )
 
-func CreateServiceCommand() {
-	serviceName := helpers.PromptWithDefault("Enter the service name", "new-service")
-	
-	// Basic validation for service name (alphanumeric, dashes, underscores)
+func CreateServiceCommand(cmd *cobra.Command) {
+	// 1. Service Name
+	serviceName, _ := cmd.Flags().GetString("name")
+	if serviceName == "" {
+		serviceName = helpers.PromptWithDefault("Enter the service name", "new-service")
+	}
+
+	// Basic validation for service name
 	if matched, _ := regexp.MatchString(`^[a-zA-Z0-9_-]+$`, serviceName); !matched {
 		log.Fatalf("Invalid service name '%s'. Use only alphanumeric characters, dashes, and underscores.", serviceName)
 	}
 
-	includeDB := helpers.PromptYesNo("Do you want to include a PostgreSQL database?")
-	includePrometheus := helpers.PromptYesNo("Do you want to include Prometheus metrics?")
-	includeSwagger := helpers.PromptYesNo("Do you want to include Swagger documentation?")
-	port := helpers.PromptWithDefault("Enter the port", "8080")
+	// 2. Database
+	includeDB, _ := cmd.Flags().GetBool("with-db")
+	if !cmd.Flags().Changed("with-db") {
+		includeDB = helpers.PromptYesNo("Do you want to include a PostgreSQL database?")
+	}
 
+	// 3. Prometheus
+	includePrometheus, _ := cmd.Flags().GetBool("with-prometheus")
+	if !cmd.Flags().Changed("with-prometheus") {
+		includePrometheus = helpers.PromptYesNo("Do you want to include Prometheus metrics?")
+	}
+
+	// 4. Swagger
+	includeSwagger, _ := cmd.Flags().GetBool("with-swagger")
+	if !cmd.Flags().Changed("with-swagger") {
+		includeSwagger = helpers.PromptYesNo("Do you want to include Swagger documentation?")
+	}
+
+	// 5. Port
+	port, _ := cmd.Flags().GetString("port")
+	if !cmd.Flags().Changed("port") {
+		port = helpers.PromptWithDefault("Enter the port", "8080")
+	}
+
+	// Execution
 	if err := generators.GenerateService(serviceName, includeDB, includePrometheus, includeSwagger, port); err != nil {
 		log.Fatalf("Error generating service: %v", err)
 	}
