@@ -26,22 +26,26 @@ When you run `ava create` without flags, you will be asked the following questio
 For automation, CI/CD, or AI agents, you can use flags to skip the prompts.
 
 ```bash
-ava create --name <name> [options]
+ava create -y --name <name> [options]
 ```
 
 **Available Flags:**
 
-- `--name, -n <string>`: Name of the service (Required for non-interactive mode).
+- `--yes, -y`: **Non-interactive mode**: skip ALL prompts and use default values for unspecified options.
+- `--name, -n <string>`: Name of the service.
 - `--port, -p <string>`: Port to listen on (Default: "8080").
 - `--with-db`: Include PostgreSQL database.
 - `--with-prometheus`: Include Prometheus metrics.
 - `--with-sentry`: Include Sentry error tracking.
 - `--with-swagger`: Include Swagger documentation.
 
-**Example:**
+**Examples:**
 ```bash
-# Create a service named "auth-service" with DB and Prometheus on port 3000
-ava create --name auth-service --with-db --with-prometheus --port 3000
+# Create a minimal service (no prompts, all defaults)
+ava create -y --name my-service
+
+# Create a service with DB and Prometheus on port 3000
+ava create -y --name auth-service --with-db --with-prometheus --port 3000
 ```
 
 _You can rerun the generation as many times as needed, each service will be created in a separate folder._

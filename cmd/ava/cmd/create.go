@@ -12,8 +12,12 @@ var createCmd = &cobra.Command{
 	Long: `Create a new Go service.
 You can use flags to skip the interactive prompts, which is useful for CI/CD or AI agents.
 
+Use -y/--yes to skip ALL prompts and use default values for unspecified options.
+
 Example:
-  ava create --name my-service --with-db --with-prometheus --port 9090`,
+  ava create --name my-service --with-db --with-prometheus --port 9090
+  ava create -y --name my-service                # Non-interactive with defaults
+  ava create -y --name my-service --with-db      # Non-interactive with DB only`,
 	Run: func(cmd *cobra.Command, args []string) {
 		commands.CreateServiceCommand(cmd)
 	},
@@ -29,4 +33,5 @@ func init() {
 	createCmd.Flags().Bool("with-prometheus", false, "Include Prometheus metrics endpoint")
 	createCmd.Flags().Bool("with-sentry", false, "Include Sentry error tracking")
 	createCmd.Flags().Bool("with-swagger", false, "Include Swagger documentation config")
+	createCmd.Flags().BoolP("yes", "y", false, "Non-interactive mode: use defaults for unspecified options")
 }

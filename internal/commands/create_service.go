@@ -11,10 +11,17 @@ import (
 )
 
 func CreateServiceCommand(cmd *cobra.Command) {
+	// Check for non-interactive mode
+	nonInteractive, _ := cmd.Flags().GetBool("yes")
+
 	// 1. Service Name
 	serviceName, _ := cmd.Flags().GetString("name")
 	if serviceName == "" {
-		serviceName = helpers.PromptWithDefault("Enter the service name", "new-service")
+		if nonInteractive {
+			serviceName = "new-service"
+		} else {
+			serviceName = helpers.PromptWithDefault("Enter the service name", "new-service")
+		}
 	}
 
 	// Basic validation for service name
@@ -24,31 +31,31 @@ func CreateServiceCommand(cmd *cobra.Command) {
 
 	// 2. Database
 	includeDB, _ := cmd.Flags().GetBool("with-db")
-	if !cmd.Flags().Changed("with-db") {
+	if !nonInteractive && !cmd.Flags().Changed("with-db") {
 		includeDB = helpers.PromptYesNo("Do you want to include a PostgreSQL database?")
 	}
 
 	// 3. Prometheus
 	includePrometheus, _ := cmd.Flags().GetBool("with-prometheus")
-	if !cmd.Flags().Changed("with-prometheus") {
+	if !nonInteractive && !cmd.Flags().Changed("with-prometheus") {
 		includePrometheus = helpers.PromptYesNo("Do you want to include Prometheus metrics?")
 	}
 
 	// 4. Sentry
 	includeSentry, _ := cmd.Flags().GetBool("with-sentry")
-	if !cmd.Flags().Changed("with-sentry") {
+	if !nonInteractive && !cmd.Flags().Changed("with-sentry") {
 		includeSentry = helpers.PromptYesNo("Do you want to include Sentry for error tracking?")
 	}
 
 	// 5. Swagger
 	includeSwagger, _ := cmd.Flags().GetBool("with-swagger")
-	if !cmd.Flags().Changed("with-swagger") {
+	if !nonInteractive && !cmd.Flags().Changed("with-swagger") {
 		includeSwagger = helpers.PromptYesNo("Do you want to include Swagger documentation?")
 	}
 
 	// 6. Port
 	port, _ := cmd.Flags().GetString("port")
-	if !cmd.Flags().Changed("port") {
+	if !nonInteractive && !cmd.Flags().Changed("port") {
 		port = helpers.PromptWithDefault("Enter the port", "8080")
 	}
 
