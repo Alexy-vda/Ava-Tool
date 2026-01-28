@@ -1,0 +1,37 @@
+---
+name: ava-create
+description: Create a new Go microservice using Ava-Tool. Use this when the user asks to "scaffold", "generate", or "create" a new Go service/project/api.
+allowed-tools: Bash
+---
+
+# Ava-Tool Service Generator
+
+Use the `ava` CLI to generate a production-ready Go microservice.
+
+## Usage
+
+Construct the `ava create` command based on the user's requirements.
+
+```bash
+ava create --name $ARGUMENTS [options]
+```
+
+## Options Mapping
+
+Analyze the user's request to determine the flags:
+
+- **Database**: If user mentions "database", "postgres", "db", "sql", "gorm" -> add `--with-db`
+- **Prometheus**: If user mentions "metrics", "prometheus", "monitoring" -> add `--with-prometheus`
+- **Sentry**: If user mentions "sentry", "error tracking", "logs" -> add `--with-sentry`
+- **Swagger**: If user mentions "swagger", "openapi", "documentation", "docs" -> add `--with-swagger`
+- **Port**: If user specifies a port (e.g., "on port 3000") -> add `--port <number>`
+
+## Example
+
+User: "Create a user-service with postgres and metrics on port 5000"
+Command: `ava create --name user-service --with-db --with-prometheus --port 5000`
+
+## Important
+
+1.  Always execute the command using the `Bash` tool.
+2.  After generation, tell the user the service is ready and suggest they run `cd <service-name> && docker-compose up`.

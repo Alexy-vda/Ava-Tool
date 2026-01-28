@@ -48,6 +48,23 @@ _You can rerun the generation as many times as needed, each service will be crea
 
 ### AI / Claude Code Integration
 
+**1. Install the Skill:**
+
+Run this command once to teach Claude Code how to use Ava-Tool:
+```bash
+ava install-skill
+```
+This installs a custom skill into `~/.claude/skills/ava-create/`, allowing Claude to understand `ava create` commands.
+
+**2. Use with Claude:**
+
+Now you can ask Claude naturally:
+> "Create a new user-service with database and metrics"
+
+Claude will understand your intent and execute the correct `ava create` command.
+
+**3. Generated Project Compatibility:**
+
 Each generated service includes a `.claude/CLAUDE.md` file. This file provides instructions for AI agents like Claude Code on how to build, run, test, and understand the project, making it immediately "AI-friendly".
 
 ## Start a generated service
