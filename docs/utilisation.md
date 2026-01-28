@@ -46,6 +46,10 @@ ava create --name auth-service --with-db --with-prometheus --port 3000
 
 _You can rerun the generation as many times as needed, each service will be created in a separate folder._
 
+### AI / Claude Code Integration
+
+Each generated service includes a `.claude/CLAUDE.md` file. This file provides instructions for AI agents like Claude Code on how to build, run, test, and understand the project, making it immediately "AI-friendly".
+
 ## Start a generated service
 
 ```bash

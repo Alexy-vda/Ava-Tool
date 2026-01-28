@@ -61,6 +61,9 @@ var dockerComposeDBTemplate string
 //go:embed templates/README.md.tmpl
 var readmeTemplate string
 
+//go:embed templates/CLAUDE.md.tmpl
+var claudeTemplate string
+
 // GenerateService crée la structure des fichiers pour un nouveau service
 func GenerateService(name string, includeDB, includePrometheus, includeSentry, includeSwagger bool, port string) error {
 	baseDir := name
@@ -72,7 +75,7 @@ func GenerateService(name string, includeDB, includePrometheus, includeSentry, i
 
 	directories := []string{
 		filepath.Join("cmd", name), "internal/configs", "internal/api/handlers",
-		"internal/api/routers", "internal/server", "internal/services", "internal/helpers",
+		"internal/api/routers", "internal/server", "internal/services", "internal/helpers", ".claude",
 	}
 	if includeDB {
 		directories = append(directories, "internal/db/", "internal/models", "internal/repositories")
@@ -101,6 +104,7 @@ func GenerateService(name string, includeDB, includePrometheus, includeSentry, i
 		filepath.Join(baseDir, "Dockerfile"):                     dockerfileTemplate,
 		filepath.Join(baseDir, "docker-compose.yaml"):            selectTemplate(includeDB, dockerComposeTemplate, dockerComposeDBTemplate),
 		filepath.Join(baseDir, "README.md"):                       readmeTemplate,
+		filepath.Join(baseDir, ".claude", "CLAUDE.md"):            claudeTemplate,
 	}
 
 	if includeDB {
